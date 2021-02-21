@@ -81,14 +81,22 @@ TEMPLATES = [
     },
 ]
 
+
+
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'auth.backends.UserAuthentication',
+        'auth.backends.SellerAuthentication',
+  ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
+JWT_SECRET_KEY_USER_AT = '123456'
+JWT_SECRET_KEY_USER_RT= '123456789'
+JWT_SECRET_KEY_SELLER_AT = '123456'
+JWT_SECRET_KEY_SELLER_RT = '123456789'
 WSGI_APPLICATION = 'music_shop.wsgi.application'
 
 
