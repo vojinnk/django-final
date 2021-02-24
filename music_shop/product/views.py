@@ -19,7 +19,7 @@ class ProductType(APIView):
         productTypes = Product_type.objects.all()
         serializer =self.serializer_class(productTypes,many=True)
 
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -27,4 +27,19 @@ class ProductType(APIView):
         serializer.save()
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+    
+class ProductTypeDetails(APIView):
+    authentication_classes=[]
+    permission_classes = (AllowAny,)
+    serializer_class = ProductTypeSerializer
+    def get_object(self,id):
+        try:
+            return Product_type.objects.get(id=id)
+        except Product_type.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request, id):
+        productType = self.get_object(id)
+        serializer = self.serializer_class(productType)
+        return Response(serializer.data,status=status.HTTP_200_OK)
     
