@@ -5,7 +5,7 @@ class Product_type(models.Model):  #vrsta proizvoda (violina, gitara...)
     product_type = models.CharField(max_length=30, unique=True, blank=False ) 
  
     def __str__(self):
-        return self.Type
+        return self.product_type
 
 
 class Product(models.Model):

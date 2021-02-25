@@ -7,7 +7,7 @@ from music_shop.permissions import AdminOnly,UserOnly,AllowAny
 from .models import Product_type,Product,Product_image
 
 from music_shop.permissions import UserOnly,AllowAny,AdminOnly
-from .serializers import ProductTypeSerializer
+from .serializers import ProductTypeSerializer, ProductSerializer
 
 # Create your views here.
 class ProductType(APIView):
@@ -43,3 +43,26 @@ class ProductTypeDetails(APIView):
         serializer = self.serializer_class(productType)
         return Response(serializer.data,status=status.HTTP_200_OK)
     
+    def delete(self,request,id):
+        productType = self.get_object(id)
+        print(productType)
+        productType.delete()
+
+        return Response(status=200)
+
+class ProductView(APIView):
+    authentication_classes=[]
+    permission_classes = (AllowAny,)
+    serializer_class = ProductSerializer
+    def get(self,request):
+        products = Product.objects.all()
+        serializer = self.serializer_class(products,many=True)
+
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
