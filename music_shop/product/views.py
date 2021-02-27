@@ -2,12 +2,15 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import generics
+
 from auth.backends import UserAuthentication
 from music_shop.permissions import AdminOnly,UserOnly,AllowAny
-from .models import Product_type,Product,Product_image
+from .models import Product_type,Product,Product_image, Shipping_detail
 
 from music_shop.permissions import UserOnly,AllowAny,AdminOnly
-from .serializers import ProductTypeSerializer, ProductSerializer
+from .serializers import ProductTypeSerializer, ProductSerializer, ProductImageSerializer, ShippingDetailSerializer
+
 
 # Create your views here.
 class ProductType(APIView):
@@ -66,3 +69,21 @@ class ProductView(APIView):
         serializer.save()
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+
+class ProductImageList(generics.ListCreateAPIView):
+    queryset = Product_image.objects.all()
+    serializer_class = ProductImageSerializer
+
+
+class ProductImageDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product_image.objects.all()
+    serializer_class = ProductImageSerializer
+
+class ShippingList(generics.ListCreateAPIView):
+    queryset = Shipping_detail.objects.all()
+    serializer_class = ShippingDetailSerializer
+
+
+class ShippingDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Shipping_detail.objects.all()
+    serializer_class = ShippingDetailSerializer
