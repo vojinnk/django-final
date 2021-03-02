@@ -1,18 +1,33 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
-from auth.backends import UserAuthentication
+from auth.backends import UserAuthentication,SellerAuthentication
 from music_shop.permissions import AdminOnly,UserOnly,AllowAny
+from seller.models import Seller
+from seller.serializers import SellerSerializer
+from user.models import User
 from .models import Product_type,Product,Product_image
 
 from music_shop.permissions import UserOnly,AllowAny,AdminOnly
-from .serializers import ProductTypeSerializer, ProductSerializer
-
+from .serializers import ProductTypeSerializer, ProductSerializer,GetProductSerializer
 # Create your views here.
+
+class ProductView(generics.ListCreateAPIView):
+    
+    queryset=Product.objects.all()
+    permission_classes=[AllowAny]
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ProductSerializer
+        else:
+            return GetProductSerializer
+
 class ProductType(APIView):
-    authentication_classes=[]
-    permission_classes = (AllowAny,)
+    authentication_classes=[UserAuthentication]
+    permission_classes = (AdminOnly,)
     serializer_class = ProductTypeSerializer
 
     def get(self,request):
@@ -27,9 +42,9 @@ class ProductType(APIView):
         serializer.save()
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
-    
+
 class ProductTypeDetails(APIView):
-    authentication_classes=[]
+    authentication_classes=[UserAuthentication]
     permission_classes = (AllowAny,)
     serializer_class = ProductTypeSerializer
     def get_object(self,id):
@@ -49,10 +64,10 @@ class ProductTypeDetails(APIView):
         productType.delete()
 
         return Response(status=200)
-
+'''
 class ProductView(APIView):
-    authentication_classes=[]
-    permission_classes = (AllowAny,)
+    authentication_classes=[SellerAuthentication]
+    permission_classes = (UserOnly,)
     serializer_class = ProductSerializer
     def get(self,request):
         products = Product.objects.all()
@@ -61,8 +76,13 @@ class ProductView(APIView):
         return Response(serializer.data,status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+        data = request.data
+      #  seller = Seller.objects.get(id=data["seller"])
+        data['seller']=Seller.objects.get(id=data["seller"]).__dict__
+        data['product_type']=Product_type.objects.get(id=data['product_type']).__dict__
+        serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+'''
