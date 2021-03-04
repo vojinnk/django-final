@@ -4,6 +4,7 @@ from .models import Product_type,Product,Product_image,Shipping_detail
 from user.serializers import UserSerializer
 from seller.serializers import SellerSerializer
 
+
 class ProductTypeSerializer(serializers.ModelSerializer):
    # product = serializers.PrimaryKeyRelatedField(many=True,queryset=Product.objects.all())
     class Meta:
@@ -23,3 +24,15 @@ class GetProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product_image
+        fields = '__all__'
+
+class ShippingDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shipping_detail
+        fields = '__all__'
+
+
