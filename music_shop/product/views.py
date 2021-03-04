@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework import generics,mixins,viewsets
-from rest_framework import generics
+from rest_framework import filters
 from rest_framework.response import Response
 from rest_framework import status
 from auth.backends import UserAuthentication,SellerAuthentication
@@ -36,6 +36,9 @@ class ProductView(mixins.CreateModelMixin,
     permission_classes = [AllowAny]
     authentication_classes = []
     queryset=Product.objects.all()
+    search_fields = ["product_name","product_type__product_type"]
+    filter_backends = (filters.SearchFilter,)
+
     
     def get_serializer_class(self):
         method = self.request.method

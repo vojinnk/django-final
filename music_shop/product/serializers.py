@@ -20,6 +20,7 @@ class CUProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         exclude=[]
+
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product_image
