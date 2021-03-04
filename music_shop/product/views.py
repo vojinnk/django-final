@@ -12,12 +12,39 @@ from user.models import User
 from .models import Product_type,Product,Product_image, Shipping_detail
 from music_shop.permissions import UserOnly,AllowAny,AdminOnly
 
-from .serializers import ProductTypeSerializer, ProductSerializer, GetProductSerializer,ProductImageSerializer, ShippingDetailSerializer
+from .serializers import ProductImageSerializer, ShippingDetailSerializer, ProductTypeSerializer, ProductSerializer,CUProductSerializer
 
 
 
 
 # Create your views here.
+
+class ProductTypeView(mixins.CreateModelMixin,mixins.ListModelMixin,mixins.DestroyModelMixin,mixins.RetrieveModelMixin,viewsets.GenericViewSet):
+    queryset=Product_type.objects.all()
+    serializer_class = ProductTypeSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+class ProductView(mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet):
+    
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    queryset=Product.objects.all()
+    
+    def get_serializer_class(self):
+        method = self.request.method
+        if method == 'PUT' or method == 'POST':
+            return CUProductSerializer
+        else:
+            return ProductSerializer
+
+
+
 
 class ProductImageList(generics.ListCreateAPIView):
     queryset = Product_image.objects.all()

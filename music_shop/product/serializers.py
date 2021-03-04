@@ -4,27 +4,22 @@ from .models import Product_type,Product,Product_image,Shipping_detail
 from user.serializers import UserSerializer
 from seller.serializers import SellerSerializer
 
-
 class ProductTypeSerializer(serializers.ModelSerializer):
-   # product = serializers.PrimaryKeyRelatedField(many=True,queryset=Product.objects.all())
     class Meta:
         model = Product_type
-        fields = '__all__'
+        exclude=[]
     
     
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = "__all__"
-
-
-class GetProductSerializer(serializers.ModelSerializer):
-    product_type=ProductTypeSerializer()
-    seller = UserSerializer()
+        depth=1
+        exclude=[]
+        
+class CUProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = "__all__"
-
+        exclude=[]
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product_image
