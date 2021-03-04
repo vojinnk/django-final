@@ -38,7 +38,7 @@ class ProductView(mixins.CreateModelMixin,
     queryset=Product.objects.all()
     search_fields = ["product_name","product_type__product_type"]
     filter_backends = (filters.SearchFilter,)
-    priceGT = self.request.que
+  #  priceGT = self.request.que
 
     
     def get_serializer_class(self):
