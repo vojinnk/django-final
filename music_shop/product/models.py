@@ -9,8 +9,8 @@ class Product_type(models.Model):  #vrsta proizvoda (violina, gitara...)
 
 
 class Product(models.Model):
-    seller = models.ForeignKey(Seller, related_name='product',on_delete=models.CASCADE)
-    product_type = models.ForeignKey(Product_type, related_name='product',on_delete=models.CASCADE)
+    seller = models.ForeignKey(Seller, related_name='products',on_delete=models.CASCADE)
+    product_type = models.ForeignKey(Product_type, related_name='products',on_delete=models.CASCADE)
     product_name= models.CharField(max_length=30, unique=True, blank=False )
     price= models.FloatField(null=True) 
     createdtime= models.TimeField(auto_now_add=True)   

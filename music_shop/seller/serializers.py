@@ -4,7 +4,10 @@ from django.contrib.auth import authenticate
 import jwt 
 from django.conf import settings
 
+from product.models import Product
+
 class SellerSerializer(serializers.ModelSerializer):
+    
     sellerimages= serializers.StringRelatedField(many = True)
     class Meta:
         model = Seller

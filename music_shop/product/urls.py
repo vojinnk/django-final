@@ -1,14 +1,19 @@
 
 from django.conf.urls import url
+from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from product import views as product_views
 from .views import ProductImageList, ProductImageDetail, ShippingList, ShippingDetail
 
+router = DefaultRouter()
+
+router.register(r'type', product_views.ProductTypeView)
+router.register(r'', product_views.ProductView)
+
 urlpatterns = [
 
-    path('', product_views.ProductView.as_view()),
-    path('type', product_views.ProductType.as_view()),
-    path('typeDetails/<int:id>/', product_views.ProductTypeDetails.as_view()),
+    path('', include(router.urls)),
+    
 
     path('productimages', ProductImageList.as_view(), name='productimages'),
     path('productimages/<int:pk>/', ProductImageDetail.as_view(), name='singleproductimage'),

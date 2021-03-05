@@ -1,74 +1,55 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from rest_framework import generics,mixins,viewsets
+from rest_framework import filters
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework import generics
+from auth.backends import UserAuthentication,SellerAuthentication
 
-from auth.backends import UserAuthentication
 from music_shop.permissions import AdminOnly,UserOnly,AllowAny
+from seller.models import Seller
+from seller.serializers import SellerSerializer
+from user.models import User
 from .models import Product_type,Product,Product_image, Shipping_detail
-
 from music_shop.permissions import UserOnly,AllowAny,AdminOnly
-from .serializers import ProductTypeSerializer, ProductSerializer, ProductImageSerializer, ShippingDetailSerializer
+
+from .serializers import ProductImageSerializer, ShippingDetailSerializer, ProductTypeSerializer, ProductSerializer,CUProductSerializer
+
+
 
 
 # Create your views here.
-class ProductType(APIView):
-    authentication_classes=[]
-    permission_classes = (AllowAny,)
+
+class ProductTypeView(mixins.CreateModelMixin,mixins.ListModelMixin,mixins.DestroyModelMixin,mixins.RetrieveModelMixin,viewsets.GenericViewSet):
+    queryset=Product_type.objects.all()
     serializer_class = ProductTypeSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
 
-    def get(self,request):
-        productTypes = Product_type.objects.all()
-        serializer =self.serializer_class(productTypes,many=True)
-
-        return Response(serializer.data,status=status.HTTP_200_OK)
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+class ProductView(mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet):
     
-class ProductTypeDetails(APIView):
-    authentication_classes=[]
-    permission_classes = (AllowAny,)
-    serializer_class = ProductTypeSerializer
-    def get_object(self,id):
-        try:
-            return Product_type.objects.get(id=id)
-        except Product_type.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    queryset=Product.objects.all()
+    search_fields = ["product_name","product_type__product_type"]
+    filter_backends = (filters.SearchFilter,)
+  #  priceGT = self.request.que
 
-    def get(self, request, id):
-        productType = self.get_object(id)
-        serializer = self.serializer_class(productType)
-        return Response(serializer.data,status=status.HTTP_200_OK)
     
-    def delete(self,request,id):
-        productType = self.get_object(id)
-        print(productType)
-        productType.delete()
+    def get_serializer_class(self):
+        method = self.request.method
+        if method == 'PUT' or method == 'POST':
+            return CUProductSerializer
+        else:
+            return ProductSerializer
 
-        return Response(status=200)
 
-class ProductView(APIView):
-    authentication_classes=[]
-    permission_classes = (AllowAny,)
-    serializer_class = ProductSerializer
-    def get(self,request):
-        products = Product.objects.all()
-        serializer = self.serializer_class(products,many=True)
 
-        return Response(serializer.data,status=status.HTTP_200_OK)
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
 
 class ProductImageList(generics.ListCreateAPIView):
     queryset = Product_image.objects.all()
@@ -87,3 +68,4 @@ class ShippingList(generics.ListCreateAPIView):
 class ShippingDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Shipping_detail.objects.all()
     serializer_class = ShippingDetailSerializer
+    

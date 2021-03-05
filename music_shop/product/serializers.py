@@ -1,18 +1,25 @@
-from rest_framework import serializers, exceptions
-from .models import Product_type,Product, Product_image, Shipping_detail, Seller
-
+from rest_framework import serializers,exceptions
+from seller.models import Seller
+from .models import Product_type,Product,Product_image,Shipping_detail
+from user.serializers import UserSerializer
+from seller.serializers import SellerSerializer
 
 class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product_type
-        fields = '__all__'
-    def create(self,validated_data):
-        return Product_type.objects.create(**validated_data)
+        exclude=[]
+    
     
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields='__all__'
+        depth=1
+        exclude=[]
+        
+class CUProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        exclude=[]
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,4 +30,5 @@ class ShippingDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shipping_detail
         fields = '__all__'
+
 
