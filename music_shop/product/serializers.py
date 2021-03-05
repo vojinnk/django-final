@@ -4,6 +4,7 @@ from .models import Product_type,Product,Product_image,Shipping_detail
 from user.serializers import UserSerializer
 from seller.serializers import SellerSerializer
 
+
 class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product_type
@@ -20,6 +21,8 @@ class CUProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         exclude=[]
+    
+
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:

@@ -17,10 +17,11 @@ class Product(models.Model):
  
     def __str__(self):
         return self.product_name
- 
+
+
 class Shipping_detail(models.Model): #ova tabela ne bi bila losa
-    product= models.ForeignKey(Product, related_name='shipping_detail',on_delete=models.CASCADE)
-    time= models.IntegerField(null=True) #vrijeme dostave 
+    product = models.ForeignKey(Product, related_name='shipping_detail',on_delete=models.CASCADE)
+    time = models.IntegerField(null=True) #vrijeme dostave 
     def __str__(self):
         return self.time
 

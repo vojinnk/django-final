@@ -10,6 +10,7 @@ router = DefaultRouter()
 router.register(r'type', product_views.ProductTypeView)
 router.register(r'', product_views.ProductView)
 
+
 urlpatterns = [
 
     path('', include(router.urls)),
