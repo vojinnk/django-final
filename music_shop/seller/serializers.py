@@ -52,7 +52,7 @@ class SellerLoginSerializer(serializers.Serializer):
  
         accesstoken = jwt.encode({
             'id': userObj.id,
-            'exp': '20m'
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=20)
         }, settings.JWT_SECRET_KEY_SELLER_AT, algorithm='HS256')
         refreshtoken = jwt.encode({
             'id': userObj.id
