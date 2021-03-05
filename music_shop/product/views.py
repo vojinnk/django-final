@@ -25,6 +25,12 @@ class ProductTypeView(mixins.CreateModelMixin,mixins.ListModelMixin,mixins.Destr
     serializer_class = ProductTypeSerializer
     permission_classes = [AdminOnly]
     authentication_classes = [UserAuthentication]
+    def get_permissions(self):
+        if (self.action in ['retrieve','list']):
+            retrieve_permission_list = [AllowAny]
+            return [permission() for permission in retrieve_permission_list]
+        else:
+            return super().get_permissions()
 
 class ProductView(mixins.ListModelMixin,
     mixins.RetrieveModelMixin,mixins.CreateModelMixin,
@@ -32,7 +38,7 @@ class ProductView(mixins.ListModelMixin,
     viewsets.GenericViewSet):
     
     permission_classes = [UserOnly]
-    authentication_classes = [UserAuthentication]
+    authentication_classes = [SellerAuthentication]
     queryset=Product.objects.all()
     search_fields = ["product_name","product_type__product_type"]
     filter_backends = (filters.SearchFilter,)
@@ -42,6 +48,12 @@ class ProductView(mixins.ListModelMixin,
             return CUProductSerializer
         else:
             return ProductSerializer
+    def get_permissions(self):
+        if self.action in ['retrieve','list']:
+            retrieve_permission_list = [AllowAny]
+            return [permission() for permission in retrieve_permission_list]
+        else:
+            return super().get_permissions()
 
     def create(self, request, *args, **kwargs):
 
