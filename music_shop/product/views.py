@@ -96,14 +96,5 @@ class ProductView(mixins.ListModelMixin,
         return queryset
     
 
-class ProductImageList(generics.ListCreateAPIView):
-    queryset = Product_image.objects.all()
-    serializer_class = ProductImageSerializer
-
-
-class ProductImageDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Product_image.objects.all()
-    serializer_class = ProductImageSerializer
-
 
     

@@ -12,11 +12,16 @@ class ProductTypeSerializer(serializers.ModelSerializer):
     
     
 class ProductSerializer(serializers.ModelSerializer):
+    seller = UserSerializer()
+    product_type= ProductTypeSerializer()
+    images = serializers.SerializerMethodField()
     class Meta:
         model = Product
-        depth=1
-        exclude=[]
-        
+        fields = ["id","product_name","price","shipping_time","seller","product_type","images"]
+    def get_images(self, obj):
+       images = Product_image.objects.all() # will return product query set associate with this category
+       response = ProductImageSerializer(images, many=True).data
+       return response
 class CUProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
