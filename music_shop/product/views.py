@@ -5,15 +5,17 @@ from rest_framework import filters
 from rest_framework.response import Response
 from rest_framework import status
 from auth.backends import UserAuthentication,SellerAuthentication
+from django.core.files.storage import FileSystemStorage
+import os
 
 from music_shop.permissions import AdminOnly,UserOnly,AllowAny
 from seller.models import Seller
 from seller.serializers import SellerSerializer
 from user.models import User
-from .models import Product_type,Product,Product_image, Shipping_detail
+from .models import Product_type,Product,Product_image
 from music_shop.permissions import UserOnly,AllowAny,AdminOnly
 
-from .serializers import ProductImageSerializer, ShippingDetailSerializer, ProductTypeSerializer, ProductSerializer,CUProductSerializer
+from .serializers import ProductImageSerializer, ProductTypeSerializer, ProductSerializer,CUProductSerializer
 
 
 
@@ -40,6 +42,7 @@ class ProductView(mixins.ListModelMixin,
     permission_classes = [UserOnly]
     authentication_classes = [SellerAuthentication]
     queryset=Product.objects.all()
+    serializer_class = ProductSerializer
     search_fields = ["product_name","product_type__product_type"]
     filter_backends = (filters.SearchFilter,)
 
@@ -48,6 +51,7 @@ class ProductView(mixins.ListModelMixin,
             return CUProductSerializer
         else:
             return ProductSerializer
+    
     def get_permissions(self):
         if self.action in ['retrieve','list']:
             retrieve_permission_list = [AllowAny]
@@ -56,12 +60,25 @@ class ProductView(mixins.ListModelMixin,
             return super().get_permissions()
 
     def create(self, request, *args, **kwargs):
+        data = request.POST.copy()
+        fs = FileSystemStorage()
 
-        data = request.data
         data["seller"] = request.user.id
+        images = request.FILES.getlist("pictures")
+        imageserializer=ProductImageSerializer
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        print(serializer.validated_data)
+        for f in images:
+            file = fs.save(f.name, f)
+            #print(os.path.abspath("MEDIA/"+file))
+            imgdata={}
+            imgdata['imageurl']=os.path.abspath("MEDIA/"+file)
+            imgdata['product']=Product.objects.get(product_name=serializer.validated_data['product_name']).id
+            img = imageserializer(data=imgdata)
+            img.is_valid(raise_exception=True)
+            img.save() 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -69,12 +86,15 @@ class ProductView(mixins.ListModelMixin,
         queryset=Product.objects.all().order_by("-createdtime")
         maxPrice = self.request.query_params.get('maxPrice', None)
         minPrice = self.request.query_params.get('minPrice', None)
+        product_type = self.request.query_params.get('product_type', None)
         if maxPrice is not None:
             queryset=queryset.filter(price__lte=maxPrice)
         if minPrice is not None:
             queryset=queryset.filter(price__gte=minPrice)
+        if product_type is not None:
+            queryset=queryset.filter(product_type=product_type)
         return queryset
-
+    
 
 class ProductImageList(generics.ListCreateAPIView):
     queryset = Product_image.objects.all()
@@ -85,12 +105,5 @@ class ProductImageDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product_image.objects.all()
     serializer_class = ProductImageSerializer
 
-class ShippingList(generics.ListCreateAPIView):
-    queryset = Shipping_detail.objects.all()
-    serializer_class = ShippingDetailSerializer
 
-
-class ShippingDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Shipping_detail.objects.all()
-    serializer_class = ShippingDetailSerializer
     

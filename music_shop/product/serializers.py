@@ -1,6 +1,6 @@
 from rest_framework import serializers,exceptions
 from seller.models import Seller
-from .models import Product_type,Product,Product_image,Shipping_detail
+from .models import Product_type,Product,Product_image
 from user.serializers import UserSerializer
 from seller.serializers import SellerSerializer
 
@@ -29,9 +29,5 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = Product_image
         fields = '__all__'
 
-class ShippingDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Shipping_detail
-        fields = '__all__'
 
 

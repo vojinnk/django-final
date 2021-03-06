@@ -3,7 +3,7 @@ from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from product import views as product_views
-from .views import ProductImageList, ProductImageDetail, ShippingList, ShippingDetail
+from .views import ProductImageList, ProductImageDetail
 
 router = DefaultRouter()
 
@@ -19,7 +19,6 @@ urlpatterns = [
     path('productimages', ProductImageList.as_view(), name='productimages'),
     path('productimages/<int:pk>/', ProductImageDetail.as_view(), name='singleproductimage'),
 
-    path('shipping', ShippingList.as_view(), name='shipping'),
-    path('shipping/<int:pk>/', ShippingDetail.as_view(), name='singleshipping'),
+   
    
 ]
