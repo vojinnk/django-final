@@ -10,18 +10,21 @@ class ProductTypeSerializer(serializers.ModelSerializer):
         model = Product_type
         exclude=[]
     
-    
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product_image
+        exclude=[]
+
 class ProductSerializer(serializers.ModelSerializer):
     seller = UserSerializer()
     product_type= ProductTypeSerializer()
-    images = serializers.SerializerMethodField()
+    productimages = serializers.StringRelatedField(many=True)
     class Meta:
         model = Product
-        fields = ["id","product_name","price","shipping_time","seller","product_type","images"]
-    def get_images(self, obj):
-       images = Product_image.objects.all() # will return product query set associate with this category
-       response = ProductImageSerializer(images, many=True).data
-       return response
+        fields = ["id","product_name","price","shipping_time","seller","product_type","productimages"]
+    
+
 class CUProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -29,10 +32,6 @@ class CUProductSerializer(serializers.ModelSerializer):
     
 
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product_image
-        fields = '__all__'
 
 
 

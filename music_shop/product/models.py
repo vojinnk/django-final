@@ -22,7 +22,7 @@ class Product(models.Model):
 
 class Product_image(models.Model): #zbog veceg broja slika za jedan proizvod bolje da ova tabela bude posebna
     imageurl= models.CharField(max_length=200, unique=True, blank=False,null=False ) 
-    product = models.ForeignKey(Product,related_name='productimages',on_delete=models.PROTECT)
+    product = models.ForeignKey(Product,related_name='productimages',on_delete=models.CASCADE)
  
     def __str__(self):
         return self.imageurl       

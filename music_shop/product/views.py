@@ -4,11 +4,12 @@ from rest_framework import generics,mixins,viewsets
 from rest_framework import filters
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
 from auth.backends import UserAuthentication,SellerAuthentication
 from django.core.files.storage import FileSystemStorage
 import os
 
-from music_shop.permissions import AdminOnly,UserOnly,AllowAny
+from music_shop.permissions import AdminOnly,UserOnly,AllowAny,UserOrReadOnly
 from seller.models import Seller
 from seller.serializers import SellerSerializer
 from user.models import User
@@ -39,12 +40,13 @@ class ProductView(mixins.ListModelMixin,
     mixins.UpdateModelMixin,mixins.DestroyModelMixin,
     viewsets.GenericViewSet):
     
-    permission_classes = [UserOnly]
+    permission_classes = [UserOrReadOnly ]
     authentication_classes = [SellerAuthentication]
     queryset=Product.objects.all()
     serializer_class = ProductSerializer
     search_fields = ["product_name","product_type__product_type"]
     filter_backends = (filters.SearchFilter,)
+    pagination_class = LimitOffsetPagination
 
     def get_serializer_class(self):
         if self.request.method == "POST" or self.request.method == "PUT":
@@ -97,4 +99,20 @@ class ProductView(mixins.ListModelMixin,
     
 
 
-    
+class ImagesView(mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,mixins.DestroyModelMixin,
+    viewsets.GenericViewSet):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    queryset = Product_image.objects.all()
+    serializer_class = ProductImageSerializer
+
+class ProductImageList(generics.ListCreateAPIView):
+    queryset = Product_image.objects.all()
+    serializer_class = ProductImageSerializer
+
+
+class ProductImageDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product_image.objects.all()
+    serializer_class = ProductImageSerializer

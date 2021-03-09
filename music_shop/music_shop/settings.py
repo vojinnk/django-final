@@ -90,7 +90,9 @@ REST_FRAMEWORK = {
   ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 5
 }
 
 JWT_SECRET_KEY_USER_AT = '123456'
