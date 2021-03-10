@@ -25,7 +25,7 @@ class Cart(APIView):
         return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
 
     def get(self, request):
-        cart = Cart.objects.all()
+        cart = Cart.objects.all(user_id=request.user.id)
         serializer = self.serializer_class
         return Response({"data":serializer.data}, status=status.HTTP_200_OK)
 
