@@ -15,6 +15,6 @@ urlpatterns = [
     url(r'^product/', include('product.urls')),
     #url(r'^orders/', include('orders.urls')),
     url(r'^seller/', include('seller.urls')),
-    #url(r'^cart/', include('cart.urls')),
+    url(r'^cart/', include('cart.urls')),
     #path('admin/', admin.site.urls),
 ]

@@ -10,8 +10,11 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ['product']
-    def update(self,validated_data,instance):
-        products = validated_data.pop('products')
-        cart = instance
-        for product in products: 
-            cart.product.add(product)
+#    def update(self,validated_data,instance):
+#        products = validated_data.pop('products')
+#        cart = instance
+#        for product in products: 
+#            cart.product.add(product)
+#
+#        cart.save()
+        
